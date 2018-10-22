@@ -19,10 +19,10 @@
             </div>
             <div class="form-group row">
                 <div class="col-auto">
-                  <select class="form-control" id="my_select">
-                    <option value="metric">Metric System</option>
-                    <option value="imperial">Imperial System</option>
-                  </select>
+                    <select class="form-control" id="my_select">
+                        <option value="metric">Metric System</option>
+                        <option value="imperial">Imperial System</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -34,21 +34,48 @@
         <span id="display_message"></span>
     </div>
     <script type="text/javascript">
-       
+
         const global = {}
 
         global.calculateForm = document.querySelector('#calculate');
         global.displayValueElement = document.querySelector('#display_value');
         global.displayMessageElement = document.querySelector('#display_message');
+        global.selectorElement = document.getElementById("my_select")
 
+        const calculateBMI = () => {
+            return new Promise(resolve => {
+                //1. check for what value the selector holds does it say metric or imperial
+                let w, h
+                let method = global.selectorElement.options[global.selectorElement.selectedIndex].value
+                if (method === "metric") {
+                     w = parseFloat(document.getElementById('weight-in-kgs').value);
+                     h = parseFloat(document.getElementById('height-in-cm').value);
+                } else {
+                    
+                     w = parseFloat(document.getElementById('weight-in-lbs').value);
+                     h = parseFloat(document.getElementById('height-in-in').value);
+                }
+                //2. depending on that value, we will look for vales in specific input feilds
+                //3. if its metric, we will look in these feilds
 
-        
+                //4. but if its imperial then you will have to look in other feilds on line 16 and 17
+                //5. go on and just pass that in in the new person object
+                let person = new Person({
+                    weight: w,
+                    height: h,
+                });
+                //6. below here we need to call the right method on the right person
+                method === "metric" ? person.calculate_bmi() : person.calculate_imperial_bmi()
+                resolve(person);
+            })
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
-            
+
             global.calculateForm.addEventListener('submit', event => {
-               
+
                 event.preventDefault();
-                
+
                 calculateBMI()
                     .then(person => {
                         
@@ -58,19 +85,7 @@
             })
         });
 
-        const calculateBMI = () => {
-            return new Promise(resolve => {
-                
-                let w = parseFloat(document.getElementById('weight-in-kgs').value);
-                let h = parseFloat(document.getElementById('height-in-cm').value);
-                let person = new Person({
-                    weight: w,
-                    height: h,
-                });
-                person.calculate_bmi();
-                resolve(person);
-            })
-        };
+
     </script>
 </body>
 
